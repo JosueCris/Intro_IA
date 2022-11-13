@@ -4,11 +4,24 @@ import sys
 sys.setrecursionlimit(2169)
 
 visited = []
+visit = []
 queue = []
 
+
+def get_num(matriz, num):
+    row = 0
+    for i in matriz:
+        try:
+            colum = i.index(num)
+            return row, colum
+        except:
+            row += 1
+    return None, None
+
 class Puzzle:
-    def __init__(self, state):
+    def __init__(self, state, parent=None):
         self.state = state
+        self.parent = parent
         self.branches = []
 
     def is_goal(self, goal):
@@ -16,13 +29,13 @@ class Puzzle:
 
 ## Expandimos los movimientos a partir de la posicion del espacio
     def expand(self):
-        if self.is_visited():
-            return 
-        visited.append(self)
+        # if self.is_visited():
+        #     return
+        # visited.append(self)
 
         row, colum = self.get_position()
         if not row:
-            return None
+            raise ValueError
         ##  Mover espacio hacia arriba
         if row > 0:
             up = copy.deepcopy(self.state) #para copiar valores y no la direccion de memoria
@@ -60,18 +73,6 @@ class Puzzle:
             r += 1
             c = 0
         return None, None
-
-    def get_num(self, num):
-        r = 0
-        c = 0
-        for row in self.state:
-            for colum in row:
-                if colum == num:
-                    return r, c
-                c += 1
-            r += 1
-            c = 0
-        return None, None
     
     def state_print(self):
         for row in self.state:
@@ -102,18 +103,65 @@ class Puzzle:
                 return stack
         return stack
 
-## Distancia de Manhathan
+## Distancia de Manhatthan
+    # def heuristic(self, goal):
+    #     value = 0
+    #     re = ce = rm = cm = 0
+    #     for i in range(8):
+    #         rm, cm = goal.get_num(i + 1)
+    #         re, ce = self.get_num(i + 1)
+    #         value += math.sqrt(math.pow((rm - re), 2)) + math.sqrt(math.pow((cm - ce), 2))
+    #     # rm, cm = goal.get_num('_')
+    #     # re, ce = self.get_num('_')
+    #     # value += math.sqrt(math.pow((rm - re), 2)) + math.sqrt(math.pow((cm - ce), 2))
+    #     return value
+
     def heuristic(self, goal):
-        value = 0
-        re = ce = rm = cm = 0
-        for i in range(8):
-            rm, cm = goal.get_num(i + 1)
-            re, ce = self.get_num(i + 1)
-            value += math.sqrt(math.pow((rm - re), 2)) + math.sqrt(math.pow((cm - ce), 2))
-        # rm, cm = goal.get_num('_')
-        # re, ce = self.get_num('_')
-        # value += math.sqrt(math.pow((rm - re), 2)) + math.sqrt(math.pow((cm - ce), 2))
-        return value
+        h = 0
+        for num in range(1, 9):
+            re, ce = get_num(self.state, num)
+            rm, cm = get_num(goal, num)
+            manhatthan = abs(re - rm) + abs(ce - cm)
+            h += manhatthan
+        return h
+
+    def greedy_expand(self, goal):
+        if self.state == goal:
+            return self
+        for mat in visited:
+            if mat == self.state:
+                return None
+        visited.append(self.state)
+        self.expand()
+# Agregar a la franja los hijos ordenados por h
+        for branch in self.branches:
+            h = branch.heuristic(goal)
+            pos = 0
+            for nodo in visit:
+                if h < nodo.heuristic(goal):
+                    break
+                pos += 1
+            visit.insert(pos, branch)
+
+    def greedy_search(self, goal):
+        way = []
+        visit.append(self)
+# Buscar en el primero de la franja        
+        while not visit == []:
+            first = visit.pop(0)
+            print("**", first.state)
+            ret = first.greedy_expand(goal)
+            if ret:
+                # Regresar el camino
+                way.append(ret)
+                parent = ret.parent
+                while parent:
+                    way.append(parent)
+                    parent = parent.parent
+                print("Solucion encontrada")
+                return way
+        return None
+
 
 
     def camino_mas_corto(self, meta):
@@ -213,9 +261,14 @@ final = Puzzle(meta)
 #     lista.state_print()
 
 
-print(f"Suma recorrido: {raiz2.heuristic(final)}")
+print(f"Suma recorrido: {raiz2.heuristic(meta)}")
+numero = 8
+print(f"Posicion del {numero}: {get_num(raiz2.state, numero)}")
 print("Estado inicial")
 raiz2.state_print()
+
+
+raiz2.greedy_search(final)
 
 # recorrido = raiz2.BFS(meta)
 # print(recorrido)
