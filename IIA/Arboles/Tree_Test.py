@@ -83,7 +83,7 @@ op = 9
 
 while op != 0:
     print("Selecciona una opcion para el arbol binario de busqueda - AVL:")
-    op = int(input("\t[1]: Insertar\n\t[2]: Pre-Orden\n\t[3]: In-Orden\n\t[4]: Post-Orden\n\t[5]: Buscar\n\t[6]: Eliminar\n\t[7]: Datos\n\t[0]: Salir\n> "))
+    op = int(input("\t[1]: Insertar\n\t[2]: Pre-Orden\n\t[3]: In-Orden\n\t[4]: Post-Orden\n\t[5]: Buscar\n\t[6]: Eliminar\n\t[7]: Datos\n\t[8]: Parent - Child\n\t[0]: Salir\n> "))
 
     if op == 1:
         num = int(input("Ingresa un numero en el arbol: "))
@@ -118,8 +118,18 @@ while op != 0:
         hojas = raiz.leafs_cant()
         altura = raiz.height()
         factor = raiz.balance_factor()
+        print("Acerca del Arbol AVL . . .")
         print(f"Cantidad de nodos: {nodos}")
         print(f"Cantidad de hojas: {hojas}")
         print(f"Altura del arbol: {altura}")
-        print(f"Factor de equilibrio: {factor}")
+        print(f"Factor de equilibrio: {factor} \n")
+    if op == 8:
+        num = int(input("Ingresa el numero a verificar: "))
+        parent = raiz.get_parent(num)
+        if parent is None:
+            print(f"Root: {raiz.data} \n")
+        else:
+            print(f"Parent: {parent.data}")
+            print(f"Child: {num} \n")
+
 print("Vuelva pronto :)")

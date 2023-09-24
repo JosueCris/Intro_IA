@@ -17,8 +17,7 @@ class Tree(object):
                 self.right.add(data)
             else:
                 self.right = Tree(data)
-        # return self.balance_tree()
-
+        # self = self.balance_tree()
 
 
     def pre_orden(self):
@@ -93,12 +92,13 @@ class Tree(object):
             elif not self.right:
                 return self.left
             else:
-                # Si el nodo tiene dos hijos, encontrar el sucesor inmediato
+                # Si el nodo tiene dos hijos, buscaremos el nodo mas izquierdo inmediato
                 successor = self.right.leftmost()
                 self.data = successor.data
                 # Eliminar el sucesor inmediato
                 self.right = self.right.delete(successor.data)
-        return self  # Importante: devolver el nodo actual después de cualquier modificación
+        # return self  Devolver el nodo actual despues de cualquier modificación
+        return self.balance_tree()  #   Balanceamos el arbol despues de una eliminacion
 
 
     def nodes_cant(self):
@@ -137,6 +137,17 @@ class Tree(object):
         if self.right:
             right += self.right.height()
         return self.max(left, right)
+    
+    
+    def get_parent(self, data):
+        if not self:
+            return None
+        if (self.left and self.left.data is data) or (self.right and self.right.data is data):
+            return self
+        if data < self.data:
+            return self.left.get_parent(data) if self.left else None
+        else:
+            return self.right.get_parent(data) if self.right else None
 
 
 ##  Inicio de la pesadilla :'v
