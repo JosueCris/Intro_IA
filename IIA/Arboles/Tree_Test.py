@@ -124,12 +124,15 @@ while op != 0:
         print(f"Altura del arbol: {altura}")
         print(f"Factor de equilibrio: {factor} \n")
     if op == 8:
-        num = int(input("Ingresa el numero a verificar: "))
-        parent = raiz.get_parent(num)
-        if parent is None:
-            print(f"Root: {raiz.data} \n")
+        if raiz:
+            num = int(input("Ingresa el numero a verificar: "))
+            parent = raiz.get_parent(num)
+            if parent is None:
+                print(f"Root: {raiz.data} \n")
+            else:
+                print(f"Parent: {parent.data}")
+                print(f"Child: {num} \n")
         else:
-            print(f"Parent: {parent.data}")
-            print(f"Child: {num} \n")
+            print("Arbol vacio!!! \n")
 
 print("Vuelva pronto :)")
